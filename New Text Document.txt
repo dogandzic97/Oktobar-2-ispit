@@ -1,0 +1,224 @@
+<--- xaml --->
+
+<Window.Resources>
+        <DataTemplate x:Key="MojKomboTemplate">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Naziv}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="MojaLista">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="2" Text="{Binding Ime}"/>
+                <TextBlock Margin="2" Text="{Binding Prezime}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid Margin="0,0,0,2">
+        <DataGrid x:Name="mojGrid" HorizontalAlignment="Left" Height="166" Margin="38,40,0,0" VerticalAlignment="Top" Width="312" AutoGenerateColumns="False">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="Naplata" Header="Naplata" Click="Naplata_Click" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Polaznik ID" Binding="{Binding PolaznikID}"/>
+                <DataGridTextColumn Header="Ime" Binding="{Binding Ime}"/>
+                <DataGridTextColumn Header="Prezime" Binding="{Binding Prezime}"/>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Kurs ID" Margin="5" Grid.Row="0" Grid.Column="0"/>
+                        <TextBox Grid.Row="0" Grid.Column="1"  Margin="5" Text="{Binding KursID}"/>
+                        <TextBlock Text="Paket ID" Grid.Row="0"  Margin="5" Grid.Column="2"/>
+                        <TextBox Grid.Row="0" Grid.Column="3"  Margin="5" Text="{Binding PaketID}"/>
+                    </Grid>
+
+                </DataTemplate>
+
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        <GroupBox Header="Izbrisi Korisnika" HorizontalAlignment="Left" Height="132" Margin="550,246,0,0" VerticalAlignment="Top" Width="206">
+            <Button x:Name="btnIzbrisi" Content="Izbrisi" HorizontalAlignment="Left" Margin="62,80,0,8" Width="75" Click="btnIzbrisi_Click"/>
+        </GroupBox>
+        <TextBox x:Name="tbBrisi" HorizontalAlignment="Left" Height="23" Margin="675,282,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="69"/>
+        <Label Content="Unesi ID Polaznika" HorizontalAlignment="Left" Margin="563,282,0,0" VerticalAlignment="Top"/>
+        <ListBox x:Name="mojaLista" HorizontalAlignment="Left" Height="166" Margin="418,40,0,0" ItemTemplate="{StaticResource MojaLista}" VerticalAlignment="Top" Width="313"/>
+        <GroupBox Header="Pretraga po kursevima" HorizontalAlignment="Left" Height="132" Margin="337,246,0,0" VerticalAlignment="Top" Width="195">
+            <ComboBox x:Name="cmbPretragakursa" HorizontalAlignment="Left" Margin="29,21,0,0" VerticalAlignment="Top" ItemTemplate="{StaticResource MojKomboTemplate}" Width="120" SelectionChanged="cmbPretragakursa_SelectionChanged"/>
+        </GroupBox>
+        <Button x:Name="btnPretraga" Content="Pretraga" HorizontalAlignment="Left" Margin="395,340,0,0" VerticalAlignment="Top" Width="75" />
+        <GroupBox Header="Naplata" HorizontalAlignment="Left" Height="114" Margin="38,246,0,0" VerticalAlignment="Top" Width="279">
+            <TextBlock HorizontalAlignment="Left" Margin="10,22,0,0" TextWrapping="Wrap" Text="Popust" VerticalAlignment="Top" RenderTransformOrigin="0.796,1.273"/>
+        </GroupBox>
+        <TextBox x:Name="tbPopust" HorizontalAlignment="Left" Height="23" Margin="99,282,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55"/>
+        <TextBox x:Name="tbCena" HorizontalAlignment="Left" Height="23" Margin="238,282,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="55"/>
+        <Label Content="Cena" HorizontalAlignment="Left" Margin="196,279,0,0" VerticalAlignment="Top" RenderTransformOrigin="1.656,0.593"/>
+        <Label Content="Za naplatu" HorizontalAlignment="Left" Margin="62,322,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbNaplata" HorizontalAlignment="Left" Height="23" Margin="133,322,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="53"/>
+        <Button x:Name="btnIzracunaj" Content="Izracunaj" HorizontalAlignment="Left" Margin="218,325,0,0" VerticalAlignment="Top" Width="75" IsEnabled="False" Click="btnIzracunaj_Click"/>
+        <Menu HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="144">
+            <MenuItem Header="Rad sa podacima" VerticalAlignment="Center">
+                <MenuItem Header="Ubaci novog korisnika" Click="MenuItem_Click"></MenuItem>
+            </MenuItem>
+        </Menu>
+
+    </Grid>
+
+<-- forma 1 cs -->
+
+public partial class MainWindow : Window
+    {
+        DataClasses1DataContext dc = new DataClasses1DataContext();
+        public MainWindow()
+        {
+            InitializeComponent();
+            puniGrid();
+            puniKombo();
+
+                
+        }
+        void puniGrid()
+        {
+            var c = from k in dc.Polazniks
+                    select k;
+            mojGrid.ItemsSource = c;
+        }
+        void brisiPolaznika()
+        {
+            var k = (from c in dc.Polazniks
+                     where c.PolaznikID == Convert.ToInt32(tbBrisi.Text)
+                     select c).FirstOrDefault(); 
+            dc.Polazniks.DeleteOnSubmit(k);
+
+            try
+            {
+                dc.SubmitChanges();
+                MessageBox.Show("Uspesno ste izbrisali korisnika " + k.Ime + " " + k.Prezime, "Uspeh", MessageBoxButton.OK);
+                puniGrid();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Niste izbrisali korisnika!" +ex);
+            }
+        }
+
+        private void btnIzbrisi_Click(object sender, RoutedEventArgs e)
+        {
+            brisiPolaznika();
+        }
+        
+
+        //Pretraga
+        void puniKombo()
+        {
+            var x = from k in dc.Kurs
+                    select k;
+            cmbPretragakursa.ItemsSource = x;
+        }
+        void punilistu()
+        {
+            var selektovani = ((Kur)cmbPretragakursa.SelectedValue).KursID;
+            var polaznici = from p in dc.Polazniks
+                            where p.KursID == selektovani
+                            select p;
+
+            mojaLista.ItemsSource = polaznici;
+        }
+
+        private void cmbPretragakursa_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            punilistu();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Window1 novi = new Window1();
+            novi.ShowDialog();
+            puniGrid();
+        }
+
+        private void Naplata_Click(object sender, RoutedEventArgs e)
+        {
+            int idKursa = ((Polaznik)mojGrid.SelectedItem).KursID;
+            int idPaketa = ((Polaznik)mojGrid.SelectedItem).PaketID;
+
+            Kur c = (from k in dc.Kurs
+                     where k.KursID == idKursa
+                     select k).Single();
+            Paket x = (from z in dc.Pakets
+                       where z.PaketID == idPaketa
+                       select z).Single(); ;
+            tbPopust.Text = x.Popust.ToString(); 
+            tbCena.Text = c.Cena.ToString();
+            btnIzracunaj.IsEnabled = true;
+
+        }
+
+        private void btnIzracunaj_Click(object sender, RoutedEventArgs e)
+        {
+            double cena = Convert.ToDouble(tbCena.Text);
+            int popust = Convert.ToInt32(tbPopust.Text);
+            double popustUParama = (cena * popust) / 100;
+            double naplata = cena - popustUParama;
+
+            tbNaplata.Text = naplata.ToString();
+        }
+    }
+
+
+
+
+
+<novi prozor>
+
+
+
+
+
+<Window.Resources>
+        <DataTemplate x:Key="IspisKurseva">
+            <StackPanel>
+                <TextBlock Text="{Binding Naziv}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="IspisPaketa">
+            <StackPanel>
+                <TextBlock Text="{Binding PaketID}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid Margin="10,0,-8,-2">
+        <Grid.ColumnDefinitions>
+
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="tbIme" HorizontalAlignment="Left" Height="23" Margin="332,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" />
+        <TextBox x:Name="tbPrezime" HorizontalAlignment="Left" Height="23" Margin="332,124,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="tbSifra" HorizontalAlignment="Left" Height="23" Margin="332,165,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="tbCena" HorizontalAlignment="Left" Height="23" Margin="332,204,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="tbTrajanje" HorizontalAlignment="Left" Height="23" Margin="332,244,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="tbPopust" HorizontalAlignment="Left" Height="23" Margin="332,283,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,81,0,0" TextWrapping="Wrap" Text="Ime" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,124,0,0" TextWrapping="Wrap" Text="Prezime" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,166,0,0" TextWrapping="Wrap" Text="Sifra" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,205,0,0" TextWrapping="Wrap" Text="Cena" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,245,0,0" TextWrapping="Wrap" Text="Trajanje" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="272,283,0,0" TextWrapping="Wrap" Text="Popust" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cmbKursevi" HorizontalAlignment="Left" Margin="104,81,0,0" ItemTemplate="{StaticResource IspisKurseva}" VerticalAlignment="Top" Width="120" SelectionChanged="cmbKursevi_SelectionChanged"/>
+        <ComboBox x:Name="cmbPaket" HorizontalAlignment="Left" Margin="104,124,0,0" ItemTemplate="{StaticResource IspisPaketa}" VerticalAlignment="Top" Width="120" SelectionChanged="cmbPaket_SelectionChanged"/>
+        <Button x:Name="btnDodaj" Content="Dodaj" HorizontalAlignment="Left" Margin="126,189,0,0" VerticalAlignment="Top" Width="75" Click="btnDodaj_Click"/>
+        <Button x:Name="btnOdustani" Content="Odustani" HorizontalAlignment="Left" Margin="126,247,0,0" VerticalAlignment="Top" Width="75" Click="btnOdustani_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="25,127,0,0" TextWrapping="Wrap" Text="Paket" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="25,84,0,0" TextWrapping="Wrap" Text="Kurs" VerticalAlignment="Top"/>
+
+    </Grid>
