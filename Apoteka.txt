@@ -1,0 +1,369 @@
+<Window x:Class="Kolokvijum2.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kolokvijum2"
+        mc:Ignorable="d"
+        Title="Pregled izdatih lijekova" Height="450" Width="800" Loaded="Window_Loaded">
+    <Window.Resources>
+        <DataTemplate x:Key="prikazDijagnoza">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="{Binding Naziv}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="prikazBolesnika">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="{Binding Ime}" />
+                <TextBlock Text="   " />
+                <TextBlock Text="{Binding Prezime}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="prikazMinDoza">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="Sifra lijeka:" />
+                <TextBlock Text="   " />
+                <TextBlock Text="{Binding SifraLeka}" />
+                <TextBlock Text="   Doza:" />
+                <TextBlock Text="{Binding Doza}" />
+                <TextBlock Text="  mg " />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="prikazKutija">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="{Binding BrKutija}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="prikazBolesnikaNaziv">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="{Binding Ime}" />
+                <TextBlock Text="   " />
+                <TextBlock Text="{Binding Prezime}" />
+                <TextBlock Text="   " />
+                <TextBlock Text="{Binding Naziv}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Menu Margin="0,0,647,397">
+            <MenuItem Header="Rad sa receptima">
+                <MenuItem Header="Unesi novi recept" x:Name="UnesiNovi" Click="UnesiNovi_Click" />
+            </MenuItem>
+        </Menu>
+        <DataGrid x:Name="mojGrid" HorizontalAlignment="Left" AutoGenerateColumns="False" Height="176" Margin="10,41,0,0" VerticalAlignment="Top" Width="382" LoadingRowDetails="MojGrid_LoadingRowDetails">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sifra recepta" Binding="{Binding ReceptID}" Width="120" />
+                <DataGridTextColumn Header="Ime bolesnika" Binding="{Binding Ime}" Width="120"/>
+                <DataGridTextColumn Header="Prezime bolesnika" Binding="{Binding Prezime}" Width="*"/>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="0" Padding="10" Background="LightGoldenrodYellow">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Sifra bolesti" VerticalAlignment="Center" HorizontalAlignment="left"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SifraBolesti}" Margin="1" Width="60"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Sifra lijeka" VerticalAlignment="Center" HorizontalAlignment="left"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SifraLeka}" Width="60" Margin="1"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Broj kutija" VerticalAlignment="Center" HorizontalAlignment="left"/>
+                            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding BrKutija}" Margin="1" Width="60"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        <GroupBox x:Name="gbNaplata" Header="Naplata" HorizontalAlignment="Left" Height="149" Margin="457,41,0,0" VerticalAlignment="Top" Width="254">
+            <Grid>
+                <TextBlock HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="Broj kutija" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" Text="Jedinicna cijena" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,101,0,0" TextWrapping="Wrap" Text="Za naplatu" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" Margin="170,101,0,0" TextWrapping="Wrap" Text="dinara" VerticalAlignment="Top"/>
+                <Slider x:Name="slider" HorizontalAlignment="Left" Margin="91,11,0,0" VerticalAlignment="Top" Width="75" Maximum="100"/>
+                <TextBox x:Name="tbSlider" HorizontalAlignment="Left" Height="19" Margin="173,10,0,0" TextWrapping="Wrap" Text="{Binding Value, ElementName=slider, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="35"/>
+                <TextBox x:Name="tbCijena" HorizontalAlignment="Left" Height="17" Margin="103,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="49"/>
+                <Button x:Name="btnNaplati" Content="Naplati" HorizontalAlignment="Left" Margin="77,69,0,0" VerticalAlignment="Top" Width="63" Height="19" Click="BtnNaplati_Click"/>
+                <TextBox x:Name="tbNaplata" HorizontalAlignment="Left" Height="19" Margin="83,101,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="67"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="gbStorniraj" Header="Storniraj" HorizontalAlignment="Left" Height="72" Margin="457,203,0,0" VerticalAlignment="Top" Width="254">
+            <Grid>
+                <TextBlock HorizontalAlignment="Left" Margin="10,16,0,0" TextWrapping="Wrap" Text="Sifra recepta" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbSifraRecepta" HorizontalAlignment="Left" Height="19" Margin="92,16,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="41"/>
+                <Button x:Name="btnStorniraj" Content="Storniraj" HorizontalAlignment="Left" Margin="157,16,0,0" VerticalAlignment="Top" Width="75" Click="BtnStorniraj_Click"/>
+
+            </Grid>
+        </GroupBox>
+        <ListBox x:Name="lbPrikazBolesnika" ItemTemplate="{StaticResource prikazBolesnika}" HorizontalAlignment="Left" Height="112" Margin="457,297,0,0" VerticalAlignment="Top" Width="254"/>
+        <GroupBox x:Name="gbPretraga" Header="Pretraga po dijagnozi" HorizontalAlignment="Left" Height="167" Margin="10,242,0,0" VerticalAlignment="Top" Width="382">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="251*"/>
+                    <ColumnDefinition Width="119*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock HorizontalAlignment="Left" Margin="10,23,0,0" TextWrapping="Wrap" Text="Dijagnoza" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,119,0,0" TextWrapping="Wrap" Text="Broj kutija" VerticalAlignment="Top"/>
+                <ComboBox ItemTemplate="{StaticResource prikazDijagnoza}" x:Name="cmbDijagnoza" HorizontalAlignment="Left" Margin="104,23,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CmbDijagnoza_SelectionChanged"/>
+                <ComboBox x:Name="cmbKutije" ItemTemplate="{StaticResource prikazKutija}" HorizontalAlignment="Left" Margin="104,113,0,0" VerticalAlignment="Top" Width="57" SelectionChanged="CmbKutije_SelectionChanged"/>
+                <Button x:Name="btnMinDoza" Content="Min doza" HorizontalAlignment="Left" Margin="7,76,0,0" VerticalAlignment="Top" Width="75" Click="BtnMinDoza_Click"/>
+                <ListBox x:Name="lbLijek" ItemTemplate="{StaticResource prikazMinDoza}"  HorizontalAlignment="Left" Height="33" Margin="104,68,0,0" VerticalAlignment="Top" Width="219" Grid.ColumnSpan="2"/>
+
+            </Grid>
+        </GroupBox>
+        <ListBox x:Name="lbPrikazBolesnikaNaziv" ItemTemplate="{StaticResource prikazBolesnikaNaziv}" Visibility="Hidden" HorizontalAlignment="Left" Height="112" Margin="457,297,0,0" VerticalAlignment="Top" Width="254"/>
+
+    </Grid>
+</Window>
+
+---
+
+ public partial class MainWindow : Window
+    {
+        ApotekaDataContext db = new ApotekaDataContext();
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            puniGrid();
+            puniDijagnoze();
+        }
+
+        void puniGrid()
+        {
+            var recept = from r in db.Recepts
+                         select r;
+
+            mojGrid.ItemsSource = recept;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MojGrid_LoadingRowDetails(object sender, DataGridRowDetailsEventArgs e)
+        {
+            Recept recept = (from r in db.Recepts
+                         where r.ReceptID == ((Recept)mojGrid.SelectedValue).ReceptID
+                         select r).FirstOrDefault();
+
+            tbSlider.Text = recept.BrKutija.ToString();
+            
+        }
+
+        private void BtnNaplati_Click(object sender, RoutedEventArgs e)
+        {
+            Recept recept = (from r in db.Recepts
+                             where r.ReceptID == ((Recept)mojGrid.SelectedValue).ReceptID
+                             select r).FirstOrDefault();
+
+            int cijena = int.Parse(tbCijena.Text);
+            int brKut = int.Parse(tbSlider.Text);
+
+            tbNaplata.Text = (cijena * brKut).ToString();
+
+            recept.BrKutija = 0;
+
+            try
+            {
+                db.SubmitChanges();
+                MessageBox.Show("Uspijesno je naplaceno " + tbNaplata.Text + " dinara", "Potvrda", MessageBoxButton.OK);
+                puniGrid();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Greska prilikom naplacivanja!" + ex);
+            }
+        }
+
+        private void BtnStorniraj_Click(object sender, RoutedEventArgs e)
+        {
+            Recept sifra = (from r in db.Recepts
+                        where r.ReceptID == int.Parse(tbSifraRecepta.Text)
+                        select r).FirstOrDefault();
+
+            db.Recepts.DeleteOnSubmit(sifra);
+
+            try
+            {
+                db.SubmitChanges();
+                MessageBox.Show("Uspijesno je storniran recept pod sifrom " + tbSifraRecepta.Text, "Potvrda", MessageBoxButton.OK);
+                puniGrid();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom naplacivanja!" + ex);
+            }
+        }
+
+        void puniDijagnoze()
+        {
+            var dijagnoza = from d in db.Dijagnozas
+                            select d;
+
+            cmbDijagnoza.ItemsSource = dijagnoza;
+        }
+
+        private void CmbDijagnoza_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var bolesnici = from d in db.Recepts
+                            where d.SifraBolesti == ((Dijagnoza)cmbDijagnoza.SelectedValue).SifraBolesti
+                            select d;
+
+            lbPrikazBolesnika.ItemsSource = bolesnici;
+            puniKutije();
+        }
+
+        private void BtnMinDoza_Click(object sender, RoutedEventArgs e)
+        {
+            var minDoza = (from d in db.Terapijas
+                          where d.SifraBolesti == ((Dijagnoza)cmbDijagnoza.SelectedValue).SifraBolesti
+                          select d).Min(x=>x.Doza);
+
+            var doza = from d in db.Terapijas
+                       where d.Doza == minDoza 
+                       select d;
+
+            lbLijek.ItemsSource = doza;
+
+        }
+
+        void puniKutije()
+        {
+            var kutije = from k in db.Recepts
+                         where k.SifraBolesti == ((Dijagnoza)cmbDijagnoza.SelectedValue).SifraBolesti
+                         select k;
+
+            cmbKutije.ItemsSource = kutije;
+        }
+
+        private void CmbKutije_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var broj = from r in db.Recepts
+                       join d in db.Dijagnozas
+                       on r.SifraBolesti equals d.SifraBolesti
+                       where r.SifraBolesti == ((Dijagnoza)cmbDijagnoza.SelectedValue).SifraBolesti
+                       select new { r.Ime, r.Prezime, d.Naziv};
+
+            lbPrikazBolesnika.Visibility = Visibility.Hidden;
+
+            lbPrikazBolesnikaNaziv.Visibility = Visibility.Visible;
+            lbPrikazBolesnikaNaziv.ItemsSource = broj;
+        }
+
+        private void UnesiNovi_Click(object sender, RoutedEventArgs e)
+        {
+            UnesiNovog nov = new UnesiNovog();
+            nov.ShowDialog();
+            puniGrid();
+        }
+
+---
+
+<Window x:Class="Kolokvijum2.UnesiNovog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kolokvijum2"
+        mc:Ignorable="d"
+        Title="UnesiNovog" Height="385.169" Width="279.449">
+    <Window.Resources>
+        <DataTemplate x:Key="prikazDijagnoza">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="{Binding Naziv}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="prikazSifre">
+            <StackPanel Orientation="Horizontal" Margin="7">
+                <TextBlock Text="{Binding SifraLeka}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <TextBox x:Name="tbSifra" HorizontalAlignment="Left" Height="23" Margin="105,23,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" Text="Sifra" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,74,0,0" TextWrapping="Wrap" Text="Ime" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,124,0,0" TextWrapping="Wrap" Text="Prezime" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,176,0,0" TextWrapping="Wrap" Text="Dijagnoza" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,225,0,0" TextWrapping="Wrap" Text="Sifra lijeka" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbIme" HorizontalAlignment="Left" Height="23" Margin="105,73,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="tbPrezime" HorizontalAlignment="Left" Height="23" Margin="105,123,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        <ComboBox x:Name="cmbDijagnoza" ItemTemplate="{StaticResource prikazDijagnoza}" HorizontalAlignment="Left" Margin="105,170,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CmbDijagnoza_SelectionChanged"/>
+        <ComboBox x:Name="cmbSifra" ItemTemplate="{StaticResource prikazSifre}" HorizontalAlignment="Left" Margin="105,219,0,0" VerticalAlignment="Top" Width="49"/>
+        <Button x:Name="btnPotvrdi" Content="Potvrdi" HorizontalAlignment="Left" Margin="32,285,0,0" VerticalAlignment="Top" Width="75" Click="BtnPotvrdi_Click"/>
+        <Button x:Name="btnOdustani" Content="Odustani" HorizontalAlignment="Left" Margin="150,285,0,0" VerticalAlignment="Top" Width="75" Click="BtnOdustani_Click"/>
+
+    </Grid>
+</Window>
+ 
+
+----
+
+
+    public partial class UnesiNovog : Window
+    {
+        ApotekaDataContext db = new ApotekaDataContext();
+
+        public UnesiNovog()
+        {
+            InitializeComponent();
+            puniDijagnoze();
+        }
+
+        void puniDijagnoze()
+        {
+            var dijagnoza = from d in db.Dijagnozas
+                            select d;
+
+            cmbDijagnoza.ItemsSource = dijagnoza;
+        }
+
+        private void CmbDijagnoza_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var sifra = from s in db.Terapijas
+                        where s.SifraBolesti == ((Dijagnoza)cmbDijagnoza.SelectedValue).SifraBolesti
+                        select s;
+
+            cmbSifra.ItemsSource = sifra;
+        }
+
+        private void BtnPotvrdi_Click(object sender, RoutedEventArgs e)
+        {
+            Recept recept = new Recept();
+
+            recept.ReceptID = int.Parse(tbSifra.Text);
+            recept.Ime = tbIme.Text;
+            recept.Prezime = tbPrezime.Text;
+            recept.SifraBolesti = ((Dijagnoza)cmbDijagnoza.SelectedValue).SifraBolesti;
+            recept.SifraLeka = ((Terapija)cmbSifra.SelectedValue).SifraLeka;
+
+            db.Recepts.InsertOnSubmit(recept);
+
+            try
+            {
+                db.SubmitChanges();
+                MessageBox.Show("Uspijesno je dodat recept!", "Potvrda", MessageBoxButton.OK);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska prilikom dodavanja recepta!" + ex);
+            }
+        }
+
+        private void BtnOdustani_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+    }
+}
+
