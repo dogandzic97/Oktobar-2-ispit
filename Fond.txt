@@ -1,0 +1,336 @@
+<Window.Resources>
+        <DataTemplate x:Key="PrikazGodina">
+            <StackPanel Orientation="Horizontal" Margin="6">
+                <TextBlock Text="{Binding Godina}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="PrikazFirmi">
+            <StackPanel Orientation="Horizontal" Margin="6">
+                <TextBlock Text="{Binding PIB}"/>
+                <TextBlock Text=" , "/>
+                <TextBlock Text="{Binding Naziv}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Menu HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="91">
+            <MenuItem Header="Azuriranje" Height="25" Width="91">
+                <MenuItem x:Name="PromenaSedistaFirme" Header="Promena sedista firme" Margin="0,0,1,0" Click="MenuItem_Click"/>
+            </MenuItem>
+        </Menu>
+        <TextBlock HorizontalAlignment="Left" Margin="47,76,0,0" TextWrapping="Wrap" Text="Sifra osiguranika" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbSifOsiguranika" HorizontalAlignment="Left" Height="23" Margin="148,71,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="85"/>
+        <Button x:Name="btnPretrazi" Content="Pretrazi" HorizontalAlignment="Left" Margin="265,73,0,0" VerticalAlignment="Top" Width="75" Click="BtnPretrazi_Click"/>
+        <DataGrid x:Name="dataGrid" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="156" Margin="47,119,0,0" VerticalAlignment="Top" Width="370">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="brisi" Header="Brisanje uplate" Click="Brisi_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="PIB firme" Binding="{Binding PIB}" Width="*"/>
+                <DataGridTextColumn Header="Godina" Binding="{Binding Godina}" Width="*"/>
+                <DataGridTextColumn Header="Mesec" Binding="{Binding Mesec}" Width="*"/>
+                <DataGridTextColumn Header="Uplata" Binding="{Binding Uplaceno}" Width="*"/>
+            </DataGrid.Columns>
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Border BorderThickness="10" BorderBrush="Yellow" Background="Yellow">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Naziv firme"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Naziv, Mode=OneWay}"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Grad"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Grad, Mode=OneWay}"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+        </DataGrid>
+        <TextBlock HorizontalAlignment="Left" Margin="45,291,0,0" TextWrapping="Wrap" Text="Ukupno uplaceno :" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbUkupnoUplaceno" HorizontalAlignment="Left" Height="23" Margin="163,284,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="97"/>
+        <TextBlock HorizontalAlignment="Left" Margin="47,351,0,0" TextWrapping="Wrap" Text="Za" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cmbGodina" ItemTemplate="{StaticResource PrikazGodina}" HorizontalAlignment="Left" Margin="79,349,0,0" VerticalAlignment="Top" Width="75" SelectionChanged="CmbGodina_SelectionChanged"/>
+        <TextBlock HorizontalAlignment="Left" Margin="183,351,0,0" TextWrapping="Wrap" VerticalAlignment="Top"><Run Text="godinu uplacen"/><Run Text="o"/><Run Text=" je"/></TextBlock>
+        <TextBox x:Name="tbUplacenoGodine" HorizontalAlignment="Left" Height="23" Margin="297,344,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="81"/>
+        <GroupBox x:Name="gbUnosUplate" Header="Unos nove uplate" HorizontalAlignment="Left" Height="330" Margin="473,63,0,0" VerticalAlignment="Top" Width="290">
+            <GroupBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Unos nove uplate" x:Name="contextMenu" Click="ContextMenu_Click"/>
+                </ContextMenu>
+            </GroupBox.ContextMenu>
+            <Grid x:Name="gridUnos" HorizontalAlignment="Left" Height="309" VerticalAlignment="Top" Width="280" Margin="0,0,-2.4,-1.8" IsEnabled="False">
+                <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Izaberite firmu" VerticalAlignment="Top"/>
+                <ComboBox x:Name="cmbFirme" ItemTemplate="{StaticResource PrikazFirmi}" HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" Width="152" SelectionChanged="CmbFirme_SelectionChanged"/>
+                <Expander x:Name="expander" IsExpanded="False" Header="Detalji firme" HorizontalAlignment="Left" Height="100" Margin="10,42,0,0" VerticalAlignment="Top" Width="260">
+                    <Grid Background="#FFE5E5E5">
+                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Adresa" VerticalAlignment="Top"/>
+                        <TextBox x:Name="tbExpAdresa" HorizontalAlignment="Left" Height="23" Margin="85,6,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,49,0,0" TextWrapping="Wrap" Text="Grad" VerticalAlignment="Top"/>
+                        <TextBox x:Name="tbExpGrad" HorizontalAlignment="Left" Height="23" Margin="85,46,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    </Grid>
+                </Expander>
+                <TextBlock HorizontalAlignment="Left" Margin="10,167,0,0" TextWrapping="Wrap" Text="Godina" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbGodina" HorizontalAlignment="Left" Height="23" Margin="94,159,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,198,0,0" TextWrapping="Wrap" Text="Mesec" VerticalAlignment="Top"/>
+                <Slider x:Name="Slider" HorizontalAlignment="Left" Margin="94,196,0,0" VerticalAlignment="Top" Width="105" Minimum="1" Maximum="12" TickFrequency="1" TickPlacement="BottomRight" IsSnapToTickEnabled="True"/>
+                <TextBox x:Name="tbSlider" Text="{Binding Value, ElementName=Slider, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="215,196,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="39"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,233,0,0" TextWrapping="Wrap" Text="Uplaceno" VerticalAlignment="Top"/>
+                <TextBox x:Name="tbUplaceno" HorizontalAlignment="Left" Height="23" Margin="94,232,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                <Button x:Name="btnPotvrdi" Content="Potvrdi" HorizontalAlignment="Left" Margin="94,279,0,0" VerticalAlignment="Top" Width="75" Click="BtnPotvrdi_Click"/>
+            </Grid>
+        </GroupBox>
+
+    </Grid>
+</Window>
+
+
+.....
+
+public partial class MainWindow : Window
+    {
+        BazaDataContext db = new BazaDataContext();
+        public MainWindow()
+        {
+            InitializeComponent();
+            puniFirme();
+        }
+
+        private void ContextMenu_Click(object sender, RoutedEventArgs e)
+        {
+            gridUnos.IsEnabled = true;
+        }
+
+        private void BtnPretrazi_Click(object sender, RoutedEventArgs e)
+        {
+            puniGrid();
+
+            tbUkupnoUplaceno.Text = "";
+            var ukupno = db.Uplates.Where(u => u.SifOsiguranika == int.Parse(tbSifOsiguranika.Text)).Sum(u => u.Uplaceno).ToString();
+            tbUkupnoUplaceno.Text = ukupno;
+
+            puniGodine();
+        }
+
+        void puniGodine()
+        {
+            var godine = from g in db.Uplates
+                         where g.SifOsiguranika == int.Parse(tbSifOsiguranika.Text)
+                          select g;
+
+            cmbGodina.ItemsSource = godine;
+        }
+
+        void puniFirme()
+        {
+            var firme = from f in db.Firmas
+                        select f;
+
+            cmbFirme.ItemsSource = firme;
+        }
+
+        void puniGrid()
+        {
+            var grid = from f in db.Firmas
+                       join u in db.Uplates
+                       on f.PIB equals u.PIB
+                       where u.SifOsiguranika == int.Parse(tbSifOsiguranika.Text)
+                       select new { f.Naziv, f.Grad, u.PIB, u.Godina, u.Mesec, u.Uplaceno };
+
+            dataGrid.ItemsSource = grid;
+        }
+
+        private void CmbFirme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var grad = (from g in db.Firmas
+                         where g.PIB == ((Firma)cmbFirme.SelectedValue).PIB
+                         select g.Grad).FirstOrDefault();
+
+            tbExpGrad.Text = grad.ToString();
+
+            var adresa = (from a in db.Firmas
+                          where a.PIB == ((Firma)cmbFirme.SelectedValue).PIB
+                          select a.Adresa).FirstOrDefault();
+
+            tbExpAdresa.Text = adresa.ToString();
+
+            expander.IsExpanded = true;
+        }
+
+        int sumaPoGodinama()
+        {
+            int suma = 0;
+            foreach (Uplate u in db.Uplates)
+            {
+                if (u.SifOsiguranika == int.Parse(tbSifOsiguranika.Text) && u.Godina==((Uplate)cmbGodina.SelectedValue).Godina)
+                {
+                    suma = suma + u.Uplaceno;
+                }
+            }
+            return suma;
+        }
+
+        private void CmbGodina_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            tbUplacenoGodine.Text = sumaPoGodinama().ToString();
+        }
+
+        private void BtnPotvrdi_Click(object sender, RoutedEventArgs e)
+        {
+            Uplate uplate = new Uplate();
+
+            uplate.SifOsiguranika = int.Parse(tbSifOsiguranika.Text);
+            uplate.PIB = ((Firma)cmbFirme.SelectedValue).PIB;
+            uplate.Godina = int.Parse(tbGodina.Text);
+            uplate.Mesec = int.Parse(tbSlider.Text);
+            uplate.Uplaceno = int.Parse(tbUplaceno.Text);
+
+            db.Uplates.InsertOnSubmit(uplate);
+
+            try
+            {
+                db.SubmitChanges();
+                MessageBox.Show("Uspesno ste dodali usplatu", "Potvrda", MessageBoxButton.OK);
+                puniGrid();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Greska pri uplati" + ex);
+            }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            PromenaSedistaFirme promena = new PromenaSedistaFirme();
+            promena.ShowDialog();
+            puniGrid();
+        }
+
+        private void Brisi_Click(object sender, RoutedEventArgs e)
+        {
+            DataGridCellInfo cell = dataGrid.SelectedCells[0];
+            string value = ((TextBlock)cell.Column.GetCellContent(cell.Item)).Text;
+
+            var brisi = (from u in db.Uplates
+                         join f in db.Firmas
+                         on u.PIB equals f.PIB
+                         where u.PIB == int.Parse(value)
+                         select u).First();
+
+            db.Uplates.DeleteOnSubmit(brisi);
+
+            try
+            {
+                db.SubmitChanges();
+                MessageBox.Show("Uspesno ste obrisali uplatu", "Potvrda", MessageBoxButton.OK);
+                puniGrid();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Greska pri brisanju uplate" + ex);
+            }
+        }
+    }
+
+
+------
+
+novi prozor
+
+<Window x:Class="Fond.PromenaSedistaFirme"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fond"
+        mc:Ignorable="d"
+        Title="PromenaSedistaFirme" Height="430.8" Width="389.6">
+    <Window.Resources>
+        <DataTemplate x:Key="PrikazFirmi">
+            <StackPanel Orientation="Horizontal" Margin="6">
+                <TextBlock Text="{Binding PIB}"/>
+                <TextBlock Text=" , "/>
+                <TextBlock Text="{Binding Naziv}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Margin="47,55,0,0" TextWrapping="Wrap" Text="Izaberite firmu" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cmbFirme" ItemTemplate="{StaticResource PrikazFirmi}" HorizontalAlignment="Left" Margin="158,49,0,0" VerticalAlignment="Top" Width="144" SelectionChanged="CmbFirme_SelectionChanged"/>
+        <TextBlock HorizontalAlignment="Left" Margin="47,117,0,0" TextWrapping="Wrap" Text="Naziv" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbNaziv" IsEnabled="True" HorizontalAlignment="Left" Height="23" Margin="158,110,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="144"/>
+        <TextBlock HorizontalAlignment="Left" Margin="47,180,0,0" TextWrapping="Wrap" Text="Adresa" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbAdresa" HorizontalAlignment="Left" Height="23" Margin="158,173,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="144"/>
+        <TextBlock HorizontalAlignment="Left" Margin="47,243,0,0" TextWrapping="Wrap" Text="Grad" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbGrad" HorizontalAlignment="Left" Height="23" Margin="158,236,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="144"/>
+        <Button x:Name="btnPrihvati" Content="Prihvati izmene" HorizontalAlignment="Left" Margin="122,315,0,0" VerticalAlignment="Top" Width="88" Click="BtnPrihvati_Click"/>
+    </Grid>
+</Window>
+
+
+--- kod
+
+   public partial class PromenaSedistaFirme : Window
+    {
+        BazaDataContext db = new BazaDataContext();
+        public PromenaSedistaFirme()
+        {
+            InitializeComponent();
+            puniKombo();
+        }
+
+        void puniKombo()
+        {
+            var firme = from f in db.Firmas
+                        select f;
+
+            cmbFirme.ItemsSource = firme;
+        }
+
+        private void CmbFirme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            tbNaziv.Text = ((Firma)cmbFirme.SelectedValue).Naziv.ToString();
+            tbNaziv.IsEnabled = false;
+            tbAdresa.Text = ((Firma)cmbFirme.SelectedValue).Adresa.ToString();
+            tbGrad.Text = ((Firma)cmbFirme.SelectedValue).Grad.ToString();
+        }
+
+        private void BtnPrihvati_Click(object sender, RoutedEventArgs e)
+        {
+            Firma azuriraj = (from a in db.Firmas
+                              where a.PIB == ((Firma)cmbFirme.SelectedValue).PIB
+                              select a).Single();
+
+            azuriraj.Adresa = tbAdresa.Text;
+            azuriraj.Grad = tbGrad.Text;
+
+            try
+            {
+                db.SubmitChanges();
+                MessageBox.Show("Uspesno ste azurirali podatke firme", "Potvrda", MessageBoxButton.OK);
+                resetuj();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Greska pri auriranju podataka firme" + ex);
+            }
+            
+        }
+
+        void resetuj()
+        {
+            tbNaziv.Text = "";
+            tbNaziv.IsEnabled = true;
+            tbAdresa.Text = "";
+            tbGrad.Text = "";
+        }
+    }
+}
+
